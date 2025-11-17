@@ -1,0 +1,49 @@
+services:
+  mysql:
+    container_name: shopware-db
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_NAME:-shopware}
+      MYSQL_USER: ${DB_USER:-shopware}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-shopware}
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "${DB_PORT_LOCAL:-3306}:3306"
+    healthcheck:
+        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+        timeout: 20s
+        retries: 10
+    networks:
+        - store_bot_shop
+
+  shopware-app:
+    container_name: shopware-app
+    image: shyim/shopware:6.6.0-php8.2
+    depends_on:
+      - mysql
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      APP_SECRET: ${APP_SECRET:-"changeme"}
+      INSTANCE_ID: ${INSTANCE_ID:-1}
+      APP_URL: ${APP_URL:-http://localhost}
+      BLUE_GREEN_DEPLOYMENT: ${BLUE_GREEN_DEPLOYMENT:-0}
+      DATABASE_HOST: ${DATABASE_HOST:-mysql}
+      DATABASE_URL: "mysql://${DB_USER}:${DB_PASSWORD}@${DATABASE_HOST}:${DB_PORT}/${DB_NAME}"
+    ports:
+      - "${HTTP_PORT_LOCAL:-80}:80"
+    command: ['default']
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/admin"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
+    networks:
+        - store_bot_shop
+
+volumes:
+  db_data:
+networks:
+  store_bot_shop:
