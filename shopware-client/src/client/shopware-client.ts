@@ -1,4 +1,7 @@
-import { getAllCategories, type Category } from "../categories/get-all-categories.js";
+import {
+  getAllCategories,
+  type Category,
+} from "../categories/get-all-categories.js";
 import { getAllProducts, type Product } from "../products/get-all-products.js";
 
 export class ShopwareClient {

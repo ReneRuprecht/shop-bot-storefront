@@ -1,13 +1,21 @@
+import { buildCategoryTree } from "./categories/mappers/category-tree-mapper.js";
+import type { CategoryNode } from "./categories/mappers/category-tree-mapper.js";
 import { ShopwareClient } from "./client/shopware-client.js";
 
 async function main() {
   const client = new ShopwareClient();
 
-  const products = await client.getAllProducts();
-  products.forEach((p) => console.log(p));
+  let categories = await client.getAllCategories();
 
-  const categories = await client.getAllCategories();
-  categories.forEach((c) => console.log(c));
+  function printTree(node: CategoryNode, indent = 0) {
+    const pad = "  ".repeat(indent);
+
+    console.log(`${pad}- ${node.name}`);
+    node.children.forEach((child: any) => printTree(child, indent + 1));
+  }
+
+  const tree = buildCategoryTree(categories);
+  tree.forEach((root) => printTree(root));
 }
 
 main();

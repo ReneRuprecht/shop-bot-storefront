@@ -3,13 +3,13 @@ import { apiGet } from "../client/api.js";
 export interface Category {
   id: string;
   categoryName: string;
-  parentId: string;
+  parentId: string | null;
 }
 
 interface CategoryShopwareResponse {
   id: string;
   name: string;
-  parentId: string;
+  parentId: string | null;
 }
 
 export async function getAllCategories(): Promise<Category[]> {
