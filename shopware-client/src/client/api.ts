@@ -10,6 +10,10 @@ export async function apiGet(path: string) {
         "sw-access-key": env.swAccessKey,
       },
     });
+
+    if (!data) throw new Error("Response is empty");
+    if (!data.elements) throw new Error("No elements in response");
+
     return data;
   } catch (error) {
     throw new Error(`Error while fetching products: ${error}`);

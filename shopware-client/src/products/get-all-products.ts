@@ -1,16 +1,33 @@
 import { apiGet } from "../client/api.js";
 
-export async function getAllProducts() {
-  let products = [];
+export interface Product {
+  name: string;
+  unitPrice: string;
+}
+
+interface ProductShopwareResponse {
+  name: string;
+  calculatedPrice: CalculatedPrice;
+}
+interface CalculatedPrice {
+  unitPrice: string;
+}
+
+export async function getAllProducts(): Promise<Product[]> {
+  let products: Product[] = [];
   let data = await apiGet("product");
 
-  for (let e in data.elements) {
-    const product = data.elements[e];
-    products.push({
-      name: product.name,
-      unitPrice: product.calculatedPrice.unitPrice,
+  data.elements
+    .filter(
+      (productResponse: ProductShopwareResponse) =>
+        productResponse.name !== null,
+    )
+    .forEach((element: ProductShopwareResponse) => {
+      products.push({
+        name: element.name,
+        unitPrice: element.calculatedPrice.unitPrice,
+      });
     });
-  }
 
   return products;
 }
