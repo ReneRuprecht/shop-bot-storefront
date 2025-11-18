@@ -1,6 +1,8 @@
-import { buildCategoryTree } from "./categories/mappers/category-tree-mapper.js";
-import type { CategoryNode } from "./categories/mappers/category-tree-mapper.js";
-import { ShopwareClient } from "./client/shopware-client.js";
+import {
+  buildCategoryTree,
+  type CategoryNode,
+} from "./shopware/categories/mappers/category-tree-mapper.js";
+import { ShopwareClient } from "./shopware/client/shopware-client.js";
 
 async function main() {
   const client = new ShopwareClient();

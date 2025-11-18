@@ -12,4 +12,7 @@ function requireEnv(name: string): string {
 export const env = {
   url: requireEnv("SHOPWARE_URL"),
   swAccessKey: requireEnv("SHOPWARE_SW_ACCESS_KEY"),
+  discordBotToken: requireEnv("DISCORD_BOT_TOKEN"),
+  discordClientId: requireEnv("DISCORD_CLIENT_ID"),
+  discordGuildId: requireEnv("DISCORD_GUILD_ID"),
 };
