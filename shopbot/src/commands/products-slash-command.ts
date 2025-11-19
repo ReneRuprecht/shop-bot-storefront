@@ -1,10 +1,12 @@
 import {
   ChatInputCommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
   type CacheType,
 } from "discord.js";
 import { getAllProducts } from "../shopware/products/get-all-products.js";
 import type { SlashCommand } from "../discord-bot/types/command-type.js";
+import { getProductsEmbeds } from "./helpers/embeds/products-embeds.js";
 
 export const productsCommand: SlashCommand = {
   data: new SlashCommandBuilder()
@@ -13,9 +15,9 @@ export const productsCommand: SlashCommand = {
 
   async execute(interaction: ChatInputCommandInteraction<CacheType>) {
     const products = await getAllProducts();
-    const text = products
-      .map((product) => `${product.name} ${product.unitPrice}`)
-      .join("\n");
-    await interaction.reply(text);
+    const productEmbeds = getProductsEmbeds(products);
+
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+    await interaction.editReply({ embeds: productEmbeds });
   },
 };
