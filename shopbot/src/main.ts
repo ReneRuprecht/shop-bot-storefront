@@ -1,3 +1,5 @@
+import { getSlashCommands } from "./config/commands/slash-commands-config.js";
+import { DiscordClient } from "./discord-bot/client/discord-client.js";
 import {
   buildCategoryTree,
   type CategoryNode,
@@ -5,6 +7,16 @@ import {
 import { ShopwareClient } from "./shopware/client/shopware-client.js";
 
 async function main() {
+  shopware();
+  discord();
+}
+async function discord() {
+  const slashCommands = getSlashCommands();
+  const dclient = new DiscordClient(slashCommands, null);
+  dclient.init();
+}
+
+async function shopware() {
   const client = new ShopwareClient();
 
   let categories = await client.getAllCategories();
