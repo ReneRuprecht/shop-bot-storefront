@@ -12,6 +12,10 @@ import { getButtonRow } from "./helpers/get-buttons-helper.js";
 export async function getPagination(
   interaction: ChatInputCommandInteraction<CacheType>,
   embeds: (APIEmbed | JSONEncodable<APIEmbed>)[],
+  fetchNewEmbeds?: (
+    index: number,
+    embeds: (APIEmbed | JSONEncodable<APIEmbed>)[],
+  ) => Promise<void> | void,
   timeout = 10 * 1000,
 ) {
   try {
@@ -43,6 +47,10 @@ export async function getPagination(
       await collectInteraction.deferUpdate();
 
       index = handlePageCount(collectInteraction, index, embeds.length);
+
+      if (fetchNewEmbeds) {
+        await fetchNewEmbeds(index, embeds);
+      }
 
       const buttonRow = getButtonRow(index, embeds.length);
 
