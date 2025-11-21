@@ -16,21 +16,44 @@ export const productsCommand: SlashCommand = {
     .setDescription("Answers with shopware products"),
 
   async execute(interaction: ChatInputCommandInteraction<CacheType>) {
-    const products = await getAllProducts();
+    const limit = 12;
+
+    const loadNextProductPage = createProductLoader(limit);
+
+    const products = await loadNextProductPage();
     const productEmbeds = getProductsEmbeds(products);
 
     await getPagination(
       interaction,
       productEmbeds,
-      async (index, embeds: (APIEmbed | JSONEncodable<APIEmbed>)[]) => {
+      async (
+        currentIndex,
+        currentProductsEmbeds: (APIEmbed | JSONEncodable<APIEmbed>)[],
+      ) => {
         // fetch new products if the end is reached
-        if (index === embeds.length - 1) {
-          const newp = await getAllProducts();
-          const newe = await getProductsEmbeds(newp);
+        if (currentIndex === currentProductsEmbeds.length - 1) {
+          const products = await loadNextProductPage();
+          const productEmbeds = await getProductsEmbeds(products);
 
-          embeds.push(...newe);
+          if (
+            productEmbeds.length + currentProductsEmbeds.length ===
+            currentProductsEmbeds.length
+          ) {
+            return;
+          }
+          currentProductsEmbeds.push(...productEmbeds);
         }
       },
     );
   },
 };
+
+function createProductLoader(limit: number) {
+  let page = 1;
+
+  return async function loadNextPage() {
+    const products = await getAllProducts({ limit, page });
+    page++;
+    return products;
+  };
+}

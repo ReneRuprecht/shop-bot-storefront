@@ -1,7 +1,7 @@
 import axios from "axios";
 import { env } from "../../config/env.js";
 
-export async function apiGet(path: string) {
+export async function apiGet(path: string, params?: any) {
   try {
     const { data } = await axios.get(`${env.url}/store-api/${path}`, {
       headers: {
@@ -9,6 +9,7 @@ export async function apiGet(path: string) {
         Accept: "application/json",
         "sw-access-key": env.swAccessKey,
       },
+      params: params,
     });
 
     if (!data) throw new Error("Response is empty");

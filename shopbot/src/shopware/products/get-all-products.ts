@@ -27,9 +27,9 @@ interface Media {
   url: string;
 }
 
-export async function getAllProducts(): Promise<Product[]> {
+export async function getAllProducts(params?: any): Promise<Product[]> {
   let products: Product[] = [];
-  let data = await apiGet("product");
+  let data = await apiGet("product", params);
 
   data.elements
     .filter(
